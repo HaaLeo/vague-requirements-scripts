@@ -1,0 +1,36 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Format",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/scripts/format.py",
+            "console": "internalConsole"
+        },
+        {
+            "name": "Calculate metrics",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/scripts/calc_metrics.py",
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "Compare Label",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/scripts/compare.py",
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "Inter-rater reliability",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/scripts/calc_inter_rater_reliability.py",
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        }
+    ]
+}
