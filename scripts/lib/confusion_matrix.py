@@ -13,7 +13,8 @@ def build_confusion_matrix(
         requirement_column: str = MTURK_REQUIREMENT_COLUMN,
         answer_column: str = MTURK_ANSWER_COLUMN,
         vague_answer_labels: list = MTURK_VAGUE_ANSWER_LABELS,
-        not_vague_answer_labels: list = MTURK_NOT_VAGUE_ANSWER_LABELS) -> pd.DataFrame:
+        not_vague_answer_labels: list = MTURK_NOT_VAGUE_ANSWER_LABELS,
+        drop_ties: bool = False) -> pd.DataFrame:
     """
     Build a confusion matrix of the given data_frame.
     The defaults are set to handle an Amazon MTurk Batch Result data frame.
@@ -24,6 +25,7 @@ def build_confusion_matrix(
         answer_column (str, optional): The columns name that contains the answers/labels. Defaults to MTURK_ANSWER_COLUMN.
         vague_answer_labels (list, optional): List of answers/labels that indicate a vague requirement. Defaults to MTURK_VAGUE_ANSWER_LABELS.
         not_vague_answer_labels (list, optional): List of answers/labels that indicate a non vague requirement. Defaults to MTURK_NOT_VAGUE_ANSWER_LABELS.
+        drop_ties (bool, optional): If there is a tie in votes (e.g.: One votes for vague one for not vague) then drop this entry from the confusion matrix.
 
     Returns:
         pd.DataFrame: The confusion matrix
@@ -63,8 +65,19 @@ def build_confusion_matrix(
         requirements_to_label_map[requirement]['not_vague_count'] += not_vague_count
 
     # Build data frame
-    req_list = [[requirement, counts['vague_count'], counts['not_vague_count']] for requirement, counts in requirements_to_label_map.items()]
+    if drop_ties:
+        req_list = [
+            [requirement, counts['vague_count'], counts['not_vague_count']]
+            for requirement, counts in requirements_to_label_map.items()
+            if counts['vague_count'] != counts['not_vague_count']
+        ]
+        LOGGER.info(f'Dropped {len(requirements_to_label_map.items()) - len(req_list)} requirements due to ties.')
+    else:
+        req_list = [[requirement, counts['vague_count'], counts['not_vague_count']] for requirement, counts in requirements_to_label_map.items()]
+
     result = pd.DataFrame(req_list, columns=[CM_REQUIREMENT_COLUMN, CM_VAGUE_COUNT_COLUMN, CM_NOT_VAGUE_COUNT_COLUMN])
+
+    LOGGER.info(f'Built confusion matrix including {result.shape[0]} of {len(requirements_to_label_map.items())} requirements. ')
 
     sums = result.sum(axis=0, numeric_only=True)
     LOGGER.info(f'Overall "vague" count = {sums[CM_VAGUE_COUNT_COLUMN]}. Overall "not vague" count = {sums[CM_NOT_VAGUE_COUNT_COLUMN]}')

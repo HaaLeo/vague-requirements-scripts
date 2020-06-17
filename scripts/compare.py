@@ -9,7 +9,7 @@ import pandas as pd
 from lib.read_csv import read_csv_files
 from lib.confusion_matrix import build_confusion_matrix
 from lib.majority_label import calc_majority_label
-from lib.constants import CM_REQUIREMENT_COLUMN, MAJORITY_LABEL_COLUMN
+from lib.constants import CM_REQUIREMENT_COLUMN, MAJORITY_LABEL_COLUMN, CM_NOT_VAGUE_COUNT_COLUMN, CM_VAGUE_COUNT_COLUMN
 from lib.kappa import calculate_free_marginal_kappa, calculate_fleiss_kappa
 
 logging.basicConfig(
@@ -40,41 +40,50 @@ def main():
     ]
 
     separator = ','
+    drop_ties = False
 
     LOGGER.info('Compare the labels of two batches containing the same requirements.')
     LOGGER.info('Preprocess first data frame.')
-    first_frame = _preprocess(first_batch_files, separator)
+    first_frame = _preprocess(first_batch_files, separator, drop_ties)
 
     LOGGER.info('Preprocess second data frame.')
-    second_frame = _preprocess(second_batch_files, separator)
+    second_frame = _preprocess(second_batch_files, separator, drop_ties)
+
+    frames = [first_frame, second_frame]
+    # Initially concatenate all dataframes into one
+    df = pd.concat(frames, ignore_index=True)
+
+    # If ties were dropped earlier. Drop requirements that were not rated within all frames
+    filtered_df = pd.concat(g for _, g in df.groupby(CM_REQUIREMENT_COLUMN) if len(g) == len(frames))
+
+    confusion_matrix = build_confusion_matrix(filtered_df, CM_REQUIREMENT_COLUMN, MAJORITY_LABEL_COLUMN, [1], [0])
 
     LOGGER.info('Start comparison of the two data frames.')
-    _calc_percentage(first_frame, second_frame)
-    _calc_kappa(first_frame, second_frame)
+    _calc_percentage(confusion_matrix)
+    _calc_kappa(confusion_matrix)
 
 
-def _calc_kappa(*frames: Iterable[pd.DataFrame]) -> None:
+def _calc_kappa(confusion_matrix: pd.DataFrame) -> None:
     """
     Calculate the kappas using the majority label of each frame as rater.
 
     Args:
         *frames (Iterable[pd.DataFrame]): The data frames to consider as raters.
     """
-    df = pd.concat(frames, ignore_index=True)
-    confusion_matrix = build_confusion_matrix(df, CM_REQUIREMENT_COLUMN, MAJORITY_LABEL_COLUMN, [1], [0])
-    import csv
-    confusion_matrix.to_csv('./confusion_matrix.csv', sep=',', index=False, quoting=csv.QUOTE_NONNUMERIC)
+    # import csv
+    # confusion_matrix.to_csv('./confusion_matrix.csv', sep=',', index=False, quoting=csv.QUOTE_NONNUMERIC)
 
     fleiss_kappa = calculate_fleiss_kappa(confusion_matrix)
-    free_kappa = calculate_free_marginal_kappa(confusion_matrix)
-
     LOGGER.info(f'Calculated Fleiss\' kappa = {fleiss_kappa}.')
+
+    free_kappa = calculate_free_marginal_kappa(confusion_matrix)
     LOGGER.info(f'Calculated free kappa k_free = {free_kappa}.')
 
 
-def _calc_percentage(first_frame: pd.DataFrame, second_frame: pd.DataFrame) -> None:
+def _calc_percentage(confusion_matrix: pd.DataFrame) -> None:
     """
-    Calculate the percentage of unequally labeled requirements of the two data frames.
+    Calculate the percentage of unequally labeled requirements of the confusion matrix.
+    The confusion matrix must be generated from two frames
 
     Args:
         first_frame (pd.DataFrame): The first data frame.
@@ -84,29 +93,35 @@ def _calc_percentage(first_frame: pd.DataFrame, second_frame: pd.DataFrame) -> N
     equal_label_count = 0
     unequal_label_count = 0
     # Iterate rows of the evaluated data frame
-    for (_, first_frame_row), (_, second_frame_row) in zip(first_frame.iterrows(), second_frame.iterrows()):
+    for (_, row) in confusion_matrix.iterrows():
 
-        first_req = first_frame_row[CM_REQUIREMENT_COLUMN]
-        second_req = second_frame_row[CM_REQUIREMENT_COLUMN]
-        if first_req == second_req:
-            first_label = first_frame_row[MAJORITY_LABEL_COLUMN]
-            second_label = second_frame_row[MAJORITY_LABEL_COLUMN]
+        not_vague_count = row[CM_NOT_VAGUE_COUNT_COLUMN]
+        vague_count = row[CM_VAGUE_COUNT_COLUMN]
 
-            if first_label == second_label:
-                equal_label_count += 1
-            else:
-                unequal_label_count += 1
-            overall_count += 1
+        if not_vague_count == 0 or vague_count == 0:
+            equal_label_count += 1
         else:
-            LOGGER.warn('The two batch files are not aligned correctly.')
+            unequal_label_count += 1
+        overall_count += 1
 
     LOGGER.info('Overall requirements="%s". Equal label="%s". Unequal label="%s".', overall_count, equal_label_count, unequal_label_count)
     LOGGER.info(f'Percentage of unequally labeled requirements="{(unequal_label_count/overall_count)*100}%".')
 
 
-def _preprocess(files_list: list, separator: str) -> pd.DataFrame:
+def _preprocess(files_list: list, separator: str, drop_ties: bool) -> pd.DataFrame:
+    """
+    Calculate the majority label for the given source file list
+
+    Args:
+        files_list (list): The CSV files to calculate the majority label for
+        separator (str): The CSV separator
+        drop_ties (bool): If there is a tie in votes (e.g.: One votes for vague one for not vague) then drop this entry from the confusion matrix.
+
+    Returns:
+        pd.DataFrame: The dataframe containing the majority label.
+    """
     df = read_csv_files(files_list, separator)
-    confusion_matrix = build_confusion_matrix(df)
+    confusion_matrix = build_confusion_matrix(df, drop_ties=drop_ties)
     return calc_majority_label(confusion_matrix)
 
 
