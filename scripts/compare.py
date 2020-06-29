@@ -28,6 +28,7 @@ def main():
         '../../../Desktop/Masters_Thesis/datasets/vague_requirements/Batch_4012720_batch_results.csv',  # Vague Requirements 2 Assignments per HIT. Needs to handle ties
         '../../../Desktop/Masters_Thesis/datasets/Batch_3996415_batch_results.csv',  # Vague words 3 Assignments per HIT
         '../../../Desktop/Masters_Thesis/datasets/102Requirements_expert_LH.csv',  # My Labels
+        # '../../../Desktop/Masters_Thesis/datasets/2020_06_17_Batch_Leo_star.csv',  # Vague Requirements 2 Assignments per HIT altered by LH.
         # '../../../Desktop/Masters_Thesis/datasets/102Requirements_expert_SE.csv',  # Basti's Labels
     ]
     second_batch_files = [
@@ -36,11 +37,12 @@ def main():
         # '../../../Desktop/Masters_Thesis/datasets/vague_requirements/Batch_4012720_batch_results.csv',  # Vague Requirements 2 Assignments per HIT. Needs to handle ties
         # '../../../Desktop/Masters_Thesis/datasets/Batch_3996415_batch_results.csv',  # Vague words 3 Assignments per HIT
         # '../../../Desktop/Masters_Thesis/datasets/102Requirements_expert_LH.csv',  # My Labels
+        # '../../../Desktop/Masters_Thesis/datasets/2020_06_17_Batch_Leo_star.csv',  # Vague Requirements 2 Assignments per HIT altered by LH.
         '../../../Desktop/Masters_Thesis/datasets/102Requirements_expert_SE.csv',  # Basti's Labels
     ]
 
     separator = ','
-    drop_ties = False
+    drop_ties = True
 
     LOGGER.info('Compare the labels of two batches containing the same requirements.')
     LOGGER.info('Preprocess first data frame.')
