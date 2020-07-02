@@ -5,7 +5,7 @@ import csv
 import pandas as pd
 import numpy as np
 
-from lib.read_csv import read_csv_file
+from vaguerequirementslib.read_csv import read_csv_file
 
 logging.basicConfig(
     format='%(asctime)s [%(name)-20.20s] [%(levelname)-5.5s]  %(message)s',

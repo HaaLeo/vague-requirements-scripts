@@ -21,7 +21,10 @@ def read_csv_file(file_name: str, separator: str = ',') -> pd.DataFrame:
     Returns:
         pd.DataFrame: The read data frame.
     """
-    abs_file_path = path.join(path.abspath(path.dirname(sys.modules['__main__'].__file__)), file_name)
+    if path.isabs(file_name):
+        abs_file_path = file_name
+    else:
+        abs_file_path = path.join(path.abspath(path.dirname(sys.modules['__main__'].__file__)), file_name)
     df = pd.read_csv(abs_file_path, sep=separator)
     LOGGER.debug(f'Read file="{file_name}" with {df.shape[0]} rows.')
 
