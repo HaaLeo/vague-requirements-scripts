@@ -2,7 +2,7 @@ import logging
 
 import pandas as pd
 
-from lib.constants import CM_NOT_VAGUE_COUNT_COLUMN, CM_VAGUE_COUNT_COLUMN, VAGUE_LABEL, NOT_VAGUE_LABEL, MAJORITY_LABEL_COLUMN
+from .constants import CM_NOT_VAGUE_COUNT_COLUMN, CM_VAGUE_COUNT_COLUMN, VAGUE_LABEL, NOT_VAGUE_LABEL, MAJORITY_LABEL_COLUMN
 
 LOGGER = logging.getLogger(__name__)
 

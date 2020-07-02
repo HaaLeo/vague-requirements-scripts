@@ -5,9 +5,9 @@ import csv
 
 import pandas as pd
 
-from lib.read_csv import read_csv_files
-from lib.confusion_matrix import build_confusion_matrix
-from lib.kappa import calculate_fleiss_kappa, calculate_free_marginal_kappa
+from vaguerequirementslib.read_csv import read_csv_files
+from vaguerequirementslib.confusion_matrix import build_confusion_matrix
+from vaguerequirementslib.kappa import calculate_fleiss_kappa, calculate_free_marginal_kappa
 
 logging.basicConfig(
     format='%(asctime)s [%(name)-12.12s] [%(levelname)-5.5s]  %(message)s',

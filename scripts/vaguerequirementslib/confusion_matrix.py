@@ -3,7 +3,7 @@ from typing import Iterable
 
 import pandas as pd
 
-from lib.constants import *
+from .constants import *
 
 LOGGER = logging.getLogger(__name__)
 

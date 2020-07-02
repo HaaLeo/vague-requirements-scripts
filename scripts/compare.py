@@ -6,11 +6,11 @@ from typing import Iterable
 
 import pandas as pd
 
-from lib.read_csv import read_csv_files
-from lib.confusion_matrix import build_confusion_matrix
-from lib.majority_label import calc_majority_label
-from lib.constants import CM_REQUIREMENT_COLUMN, MAJORITY_LABEL_COLUMN, CM_NOT_VAGUE_COUNT_COLUMN, CM_VAGUE_COUNT_COLUMN
-from lib.kappa import calculate_free_marginal_kappa, calculate_fleiss_kappa
+from vaguerequirementslib.read_csv import read_csv_files
+from vaguerequirementslib.confusion_matrix import build_confusion_matrix
+from vaguerequirementslib.majority_label import calc_majority_label
+from vaguerequirementslib.constants import CM_REQUIREMENT_COLUMN, MAJORITY_LABEL_COLUMN, CM_NOT_VAGUE_COUNT_COLUMN, CM_VAGUE_COUNT_COLUMN
+from vaguerequirementslib.kappa import calculate_free_marginal_kappa, calculate_fleiss_kappa
 
 logging.basicConfig(
     format='%(asctime)s [%(name)-20.20s] [%(levelname)-5.5s]  %(message)s',
