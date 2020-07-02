@@ -28,6 +28,8 @@ setup(
     author='Leo Hanisch',
     license='BSD 3-Clause License',
     install_requires=[
+        'pandas',
+        'numpy'
     ],
     project_urls={
         'Issue Tracker': 'https://github.com/HaaLeo/vague-requirements-scripts/issues',
