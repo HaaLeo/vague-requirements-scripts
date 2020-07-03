@@ -45,7 +45,7 @@ def main():
     #     [0, 2, 2, 3, 7]
     # ])
     # Uncomment the following line to print the confusion matrix
-    confusion_matrix.to_csv('./confusion_matrix.csv', sep=',', index=False, quoting=csv.QUOTE_NONNUMERIC)
+    # confusion_matrix.to_csv('./confusion_matrix.csv', sep=',', index=False, quoting=csv.QUOTE_NONNUMERIC)
 
     fleiss_kappa = calculate_fleiss_kappa(confusion_matrix)
     free_kappa = calculate_free_marginal_kappa(confusion_matrix)

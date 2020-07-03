@@ -17,7 +17,7 @@ LOGGER.setLevel(logging.DEBUG)
 
 
 def main():
-    corpus_file = '../../../Desktop/Masters_Thesis/datasets/corpus/requirement-corpus.csv'  # Corpus
+    corpus_file = '../../../Desktop/Masters_Thesis/datasets/corpus/raw/requirement-corpus-all.csv'  # Corpus
 
     separator = ';'
 
@@ -26,9 +26,11 @@ def main():
 
     LOGGER.info('Read corpus.')
     df = read_csv_file(corpus_file, separator=';').groupby('label').get_group('requirement')
+    # The raw df contains duplicates of requirements
+    df = df.drop_duplicates()
     for k, batch in df.groupby(np.arange(len(df))//batch_size):
         batch = batch.rename(columns={'sentence': 'requirement'})
-        batch.to_csv(f'./corpus/corpus-batch-{k}.csv', sep=separator, index=False, quoting=csv.QUOTE_NONNUMERIC, columns=['requirement'])
+        batch.to_csv(f'./corpus1/corpus-batch-{k}.csv', sep=separator, index=False, quoting=csv.QUOTE_NONNUMERIC, columns=['requirement'])
 
 
 if __name__ == '__main__':

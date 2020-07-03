@@ -80,6 +80,6 @@ def build_confusion_matrix(
     LOGGER.info(f'Built confusion matrix including {result.shape[0]} of {len(requirements_to_label_map.items())} requirements. ')
 
     sums = result.sum(axis=0, numeric_only=True)
-    LOGGER.info(f'Overall "vague" count = {sums[CM_VAGUE_COUNT_COLUMN]}. Overall "not vague" count = {sums[CM_NOT_VAGUE_COUNT_COLUMN]}')
+    LOGGER.info(f'Overall "vague" votes count = {sums[CM_VAGUE_COUNT_COLUMN]}. Overall "not vague" votes count = {sums[CM_NOT_VAGUE_COUNT_COLUMN]}')
 
     return result
