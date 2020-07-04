@@ -14,3 +14,8 @@ MAJORITY_LABEL_COLUMN = 'majority_label'
 
 VAGUE_LABEL = 1
 NOT_VAGUE_LABEL = 0
+
+TP = 'true_positive'
+TN = 'true_negative'
+FP = 'false_positive'
+FN = 'false_negative'

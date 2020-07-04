@@ -1,5 +1,9 @@
 # Vague-requirements-scripts
-This repository contains all the helper and scripts used to evaluate data for the [Vague Requirements Master's Thesis](https://github.com/HaaLeo/Vague-Requirements).
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/HaaLeo/vague-requirements-scripts/blob/master/colab-notebooks/BERT.ipynb)
+
+This repository contains the google colab notebook which was used to classify requirements as vague or not.
+Further, the helper and scripts used to evaluate data for the [Vague Requirements Master's Thesis](https://github.com/HaaLeo/Vague-Requirements) are included.
 
 ## Installation
 
