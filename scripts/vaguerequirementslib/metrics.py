@@ -1,4 +1,8 @@
+import logging
 from .constants import TP, TN, FP, FN
+
+
+LOGGER = logging.getLogger(__name__)
 
 
 def calc_all_metrics(**kwargs) -> dict:
@@ -16,37 +20,37 @@ def calc_all_metrics(**kwargs) -> dict:
 def calc_accuracy(**kwargs) -> float:
     dividend = kwargs[TP] + kwargs[TN]
     denominator = kwargs[TP] + kwargs[TN] + kwargs[FP] + kwargs[FN]
-    return dividend / denominator
+    return _build_quotient(dividend, denominator)
 
 
 def calc_precision(**kwargs) -> float:
     dividend = kwargs[TP]
     denominator = kwargs[TP] + kwargs[FP]
-    return dividend / denominator
+    return _build_quotient(dividend, denominator)
 
 
 def calc_recall(**kwargs) -> float:
     dividend = kwargs[TP]
     denominator = kwargs[TP] + kwargs[FN]
-    return dividend / denominator
+    return _build_quotient(dividend, denominator)
 
 
 def calc_specificity(**kwargs) -> float:
     dividend = kwargs[TN]
     denominator = kwargs[FP] + kwargs[TN]
-    return dividend / denominator
+    return _build_quotient(dividend, denominator)
 
 
 def calc_false_negative_rate(**kwargs) -> float:
     dividend = kwargs[FN]
     denominator = kwargs[TP] + kwargs[FN]
-    return dividend / denominator
+    return _build_quotient(dividend, denominator)
 
 
 def calc_false_positive_rate(**kwargs) -> float:
     dividend = kwargs[FP]
     denominator = kwargs[FP] + kwargs[TN]
-    return dividend / denominator
+    return _build_quotient(dividend, denominator)
 
 
 def calc_f1_score(**kwargs):
@@ -55,4 +59,13 @@ def calc_f1_score(**kwargs):
 
     dividend = 2 * precision * recall
     denominator = precision + recall
-    return dividend / denominator
+    return _build_quotient(dividend, denominator)
+
+
+def _build_quotient(dividend, denominator):
+    if denominator != 0:
+        return dividend / denominator
+    else:
+        result = 0
+        LOGGER.warning(f'Denominator = 0. Skip metric calculation and set it to value="{result}".')
+        return result
