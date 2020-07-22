@@ -1,6 +1,6 @@
 import logging
-from .constants import TP, TN, FP, FN
-
+import pandas as pd
+from .constants import TP, TN, FP, FN, VAGUE_LABEL, NOT_VAGUE_LABEL
 
 LOGGER = logging.getLogger(__name__)
 
@@ -60,6 +60,27 @@ def calc_f1_score(**kwargs):
     dividend = 2 * precision * recall
     denominator = precision + recall
     return _build_quotient(dividend, denominator)
+
+
+def calc_mean_average_precision(df: pd.DataFrame, vague_prob_column='vague_prob', not_vague_prob_column='not_vague_prob', ground_truth_column='majority_label') -> float:
+    """
+    Calculate the mean average precision for a given data frame.
+    Example data frame:
+       vague_prob  not_vague_prob  majority_label
+    0        0.98            0.02               1
+    1        0.60            0.40               0
+
+    Args:
+        df (pd.DataFrame): [description]
+
+    Returns:
+        float: [description]
+    """
+
+    for label in [VAGUE_LABEL, NOT_VAGUE_LABEL]:
+        target_column = vague_prob_column if label == VAGUE_LABEL else not_vague_prob_column
+        sorted_df = df.sort_values(by=target_column)
+
 
 
 def _build_quotient(dividend, denominator):
