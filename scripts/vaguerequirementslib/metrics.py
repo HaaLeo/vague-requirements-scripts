@@ -1,5 +1,12 @@
+# ------------------------------------------------------------------------------------------------------
+#  Copyright (c) Leo Hanisch. All rights reserved.
+#  Licensed under the BSD 3-Clause License. See LICENSE.txt in the project root for license information.
+# ------------------------------------------------------------------------------------------------------
+
 import logging
 import pandas as pd
+import numpy as np
+
 from .constants import TP, TN, FP, FN, VAGUE_LABEL, NOT_VAGUE_LABEL
 
 LOGGER = logging.getLogger(__name__)
@@ -71,16 +78,74 @@ def calc_mean_average_precision(df: pd.DataFrame, vague_prob_column='vague_prob'
     1        0.60            0.40               0
 
     Args:
-        df (pd.DataFrame): [description]
+        df (pd.DataFrame): The sorted data frame
+        vague_prob_column (str): The column name for vague probabilities
+        not_vague_prob_column (str): The column name for not vague probabilites
+        ground_truth_column (int): The column name for the ground truth
 
     Returns:
-        float: [description]
+        float: mean average precision
     """
 
-    for label in [VAGUE_LABEL, NOT_VAGUE_LABEL]:
-        target_column = vague_prob_column if label == VAGUE_LABEL else not_vague_prob_column
-        sorted_df = df.sort_values(by=target_column)
+    result = 0.
+    for label in ['vague', 'not_vague']:
+        sorted_df = df.sort_values(by=vague_prob_column) if label == 'vague' else df.sort_values(by=not_vague_prob_column)
 
+        result += calc_average_precision_k(sorted_df, vague_prob_column, not_vague_prob_column, ground_truth_column, label)
+
+    # Binary case
+    return np.round(0.5 * result, decimals=4)
+
+
+def calc_average_precision_k(df: pd.DataFrame, vague_prob_column: str, not_vague_prob_column: str, ground_truth_column: int, query: str, k=None) -> float:
+    """
+    Calculate the average precision @ k.
+
+    Args:
+        df (pd.DataFrame): The sorted data frame
+        vague_prob_column (str): The column name for vague probabilities
+        not_vague_prob_column (str): The column name for not vague probabilites
+        ground_truth_column (int): The column name for the ground truth
+        query (str): The label to query for. 'vague' or 'not_vague'
+
+    Returns:
+        float: average precision @ k
+    """
+
+    if k is None or k > df.shape[0]:
+        k = df.shape[0]
+    LOGGER.info(f'Calculate average precision @ k for query="{query}" and k="{k}"')
+
+    if query == 'vague':
+        sorted_df = df.sort_values(by=vague_prob_column, ascending=False).reset_index(drop=True)
+        query_column = vague_prob_column
+        minor_column = not_vague_prob_column
+        truth_label = VAGUE_LABEL
+    elif query == 'not_vague':
+        sorted_df = df.sort_values(by=not_vague_prob_column, ascending=False).reset_index(drop=True)
+        query_column = not_vague_prob_column
+        minor_column = vague_prob_column
+        truth_label = NOT_VAGUE_LABEL
+    else:
+        raise ValueError(f'Query="{query}" is not supported.')
+
+    score = 0
+    num_hits = 0
+    for index, row in sorted_df[:k].iterrows():
+
+        # Only consider hits for the queried column
+        if row[query_column] > row[minor_column]:
+            prediction = truth_label
+
+            # Hit
+            if prediction == row[ground_truth_column]:
+                num_hits += 1
+                score += num_hits / (index+1)
+
+        elif row[query_column] == row[minor_column]:
+            raise ValueError('Cannot handle tie.')
+
+    return _build_quotient(score, num_hits)
 
 
 def _build_quotient(dividend, denominator):
