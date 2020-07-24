@@ -1,0 +1,36 @@
+name: Lint, Test and Bundle
+
+on:
+  push:
+    branches:
+      - "*"
+
+jobs:
+  build-lint-test:
+    name: Python ${{ matrix.python-version }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    strategy:
+      fail-fast: true
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
+        python-version:
+          - 3.7
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v2
+      - name: Install Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install Dependencies
+        run: pip3 install -r requirements-dev.txt
+      - name: Run Linter
+        run: pylint ./scripts/vaguerequirementslib ./scripts/vaguerequirementslib_test
+      - name: Run Unit Tests
+        run: pytest ./scripts
+      - name: Bundle Package
+        run: python setup.py sdist bdist_wheel
