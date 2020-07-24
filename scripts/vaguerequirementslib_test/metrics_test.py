@@ -4,6 +4,7 @@
 # ------------------------------------------------------------------------------------------------------
 
 import pandas as pd
+import pytest
 
 from vaguerequirementslib.metrics import calc_mean_average_precision, calc_average_precision_k
 
@@ -29,4 +30,4 @@ def test_calc_average_precision_k_correctly():
 
     result = calc_average_precision_k(df, 'vague_prob', 'not_vague_prob', 'majority_label', 'vague')
 
-    assert result == 0.7
+    assert pytest.approx(result) == 0.7
