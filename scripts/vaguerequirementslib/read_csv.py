@@ -1,5 +1,9 @@
+# ------------------------------------------------------------------------------------------------------
+#  Copyright (c) Leo Hanisch. All rights reserved.
+#  Licensed under the BSD 3-Clause License. See LICENSE.txt in the project root for license information.
+# ------------------------------------------------------------------------------------------------------
+
 from os import path
-import inspect
 import logging
 import sys
 from typing import Iterator
@@ -8,6 +12,8 @@ import pandas as pd
 from .constants import MTURK_LEGACY_ANSWER_COLUMN, MTURK_ANSWER_COLUMN
 
 LOGGER = logging.getLogger(__name__)
+
+#pylint: disable=invalid-name
 
 
 def read_csv_file(file_name: str, separator: str = ',') -> pd.DataFrame:
@@ -26,11 +32,12 @@ def read_csv_file(file_name: str, separator: str = ',') -> pd.DataFrame:
     else:
         abs_file_path = path.join(path.abspath(path.dirname(sys.modules['__main__'].__file__)), file_name)
     df = pd.read_csv(abs_file_path, sep=separator)
-    LOGGER.debug(f'Read file="{file_name}" with {df.shape[0]} rows.')
+    LOGGER.debug('Read file="%s" with %s rows.', file_name, df.shape[0])
 
     # Preprocessing
-    df = df.rename(columns={MTURK_LEGACY_ANSWER_COLUMN: MTURK_ANSWER_COLUMN}) # Rename legacy column names
+    df = df.rename(columns={MTURK_LEGACY_ANSWER_COLUMN: MTURK_ANSWER_COLUMN})  # Rename legacy column names
     return df
+
 
 def read_csv_files_iterator(file_names: list, separator: str = ',') -> Iterator[pd.DataFrame]:
     """

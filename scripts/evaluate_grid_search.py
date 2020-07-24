@@ -1,9 +1,12 @@
-from os import path
+# ------------------------------------------------------------------------------------------------------
+#  Copyright (c) Leo Hanisch. All rights reserved.
+#  Licensed under the BSD 3-Clause License. See LICENSE.txt in the project root for license information.
+# ------------------------------------------------------------------------------------------------------
+
 import logging
 import sys
 from glob import iglob
 import json
-from typing import Tuple
 from bisect import bisect
 import csv
 
@@ -17,13 +20,13 @@ logging.basicConfig(
 LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(logging.DEBUG)
 
-
+#pylint: disable=too-many-locals
 def main():
     file_glob = '/Users/leohanisch/Desktop/Masters_Thesis/runs/grid-search/1/**/*evaluation.json'
     best_n = None
     metric = 'recall'
 
-    LOGGER.info(f'Search all evaluation results matching the glob pattern="{file_glob}"and return the {best_n} results.')
+    LOGGER.info('Search all evaluation results matching the glob pattern="%s"and return the %s results.', file_glob, best_n)
 
     evaluation_files_iterator = iglob(file_glob, recursive=True)
 
@@ -66,9 +69,9 @@ def main():
             for key in best_entries.keys():
                 best_entries[key].pop(0)
 
-    df = pd.DataFrame.from_dict(best_entries)
+    df = pd.DataFrame.from_dict(best_entries) #pylint:disable=invalid-name
     df.to_csv('grid-search-evaluation.csv', sep=';', index=False, quoting=csv.QUOTE_NONNUMERIC)
-    LOGGER.info(f'\n{df.head()}')
+    LOGGER.info('\n%s', df.head())
 
 
 # class ComparableDict(dict):

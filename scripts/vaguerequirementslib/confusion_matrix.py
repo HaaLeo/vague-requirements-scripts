@@ -1,12 +1,17 @@
+# ------------------------------------------------------------------------------------------------------
+#  Copyright (c) Leo Hanisch. All rights reserved.
+#  Licensed under the BSD 3-Clause License. See LICENSE.txt in the project root for license information.
+# ------------------------------------------------------------------------------------------------------
+
 import logging
-from typing import Iterable
 
 import pandas as pd
 
-from .constants import *
+from .constants import MTURK_ANSWER_COLUMN, MTURK_REQUIREMENT_COLUMN, MTURK_VAGUE_ANSWER_LABELS, MTURK_NOT_VAGUE_ANSWER_LABELS, CM_REQUIREMENT_COLUMN, CM_VAGUE_COUNT_COLUMN, CM_NOT_VAGUE_COUNT_COLUMN
 
 LOGGER = logging.getLogger(__name__)
 
+# pylint: disable= too-many-arguments, too-many-locals
 
 def build_confusion_matrix(
         data_frame: pd.DataFrame,
@@ -55,7 +60,7 @@ def build_confusion_matrix(
             elif value in not_vague_answer_labels:
                 not_vague_count += 1
             else:
-                LOGGER.warning(f'Found unknown answer="{value}" for requirement="{requirement}".')
+                LOGGER.warning('Found unknown answer="%s" for requirement="%s".', value, requirement)
 
         # Build map
         if requirement not in requirements_to_label_map:
@@ -71,15 +76,15 @@ def build_confusion_matrix(
             for requirement, counts in requirements_to_label_map.items()
             if counts['vague_count'] != counts['not_vague_count']
         ]
-        LOGGER.info(f'Dropped {len(requirements_to_label_map.items()) - len(req_list)} requirements due to ties.')
+        LOGGER.info('Dropped %s requirements due to ties.', len(requirements_to_label_map.items()) - len(req_list))
     else:
         req_list = [[requirement, counts['vague_count'], counts['not_vague_count']] for requirement, counts in requirements_to_label_map.items()]
 
     result = pd.DataFrame(req_list, columns=[CM_REQUIREMENT_COLUMN, CM_VAGUE_COUNT_COLUMN, CM_NOT_VAGUE_COUNT_COLUMN])
 
-    LOGGER.info(f'Built confusion matrix including {result.shape[0]} of {len(requirements_to_label_map.items())} requirements. ')
+    LOGGER.info('Built confusion matrix including %s of %s requirements. ', result.shape[0], len(requirements_to_label_map.items()))
 
     sums = result.sum(axis=0, numeric_only=True)
-    LOGGER.info(f'Overall "vague" votes count = {sums[CM_VAGUE_COUNT_COLUMN]}. Overall "not vague" votes count = {sums[CM_NOT_VAGUE_COUNT_COLUMN]}')
+    LOGGER.info('Overall "vague" votes count = %s. Overall "not vague" votes count = %s', sums[CM_VAGUE_COUNT_COLUMN], sums[CM_NOT_VAGUE_COUNT_COLUMN])
 
     return result

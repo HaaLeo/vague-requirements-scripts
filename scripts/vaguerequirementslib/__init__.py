@@ -1,3 +1,8 @@
+# ------------------------------------------------------------------------------------------------------
+#  Copyright (c) Leo Hanisch. All rights reserved.
+#  Licensed under the BSD 3-Clause License. See LICENSE.txt in the project root for license information.
+# ------------------------------------------------------------------------------------------------------
+
 from .confusion_matrix import build_confusion_matrix
 from .constants import *
 from .kappa import calculate_fleiss_kappa, calculate_free_marginal_kappa
@@ -11,4 +16,6 @@ from .metrics import \
     calc_specificity, \
     calc_false_positive_rate, \
     calc_false_negative_rate, \
-    calc_f1_score
+    calc_f1_score, \
+    calc_average_precision_k, \
+    calc_mean_average_precision

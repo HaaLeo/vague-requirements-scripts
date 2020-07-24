@@ -1,13 +1,15 @@
+# ------------------------------------------------------------------------------------------------------
+#  Copyright (c) Leo Hanisch. All rights reserved.
+#  Licensed under the BSD 3-Clause License. See LICENSE.txt in the project root for license information.
+# ------------------------------------------------------------------------------------------------------
+
 import logging
-from typing import Iterator
 import sys
 import csv
 
-import pandas as pd
 
 from vaguerequirementslib.read_csv import read_csv_files
 from vaguerequirementslib.confusion_matrix import build_confusion_matrix
-from vaguerequirementslib.kappa import calculate_fleiss_kappa, calculate_free_marginal_kappa
 from vaguerequirementslib.majority_label import calc_majority_label
 
 logging.basicConfig(
@@ -34,7 +36,7 @@ def main():
     # confusion_matrix.to_csv('./confusion_matrix.csv', sep=',', index=False, quoting=csv.QUOTE_NONNUMERIC)
 
     majority_label_df = calc_majority_label(confusion_matrix)
-    LOGGER.info(f'Calculated majority labels')
+    LOGGER.info('Calculated majority labels')
     majority_label_df.to_csv('./majority_label.csv', sep=',', index=False, quoting=csv.QUOTE_NONNUMERIC)
 
 

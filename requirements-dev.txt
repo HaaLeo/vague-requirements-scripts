@@ -1,5 +1,7 @@
 -r requirements.txt
 
+pylint-quotes
+pylintfileheader
 pytest
 pylint
 autopep8

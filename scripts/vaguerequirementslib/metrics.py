@@ -11,6 +11,7 @@ from .constants import TP, TN, FP, FN, VAGUE_LABEL, NOT_VAGUE_LABEL
 
 LOGGER = logging.getLogger(__name__)
 
+#pylint: disable=invalid-name
 
 def calc_all_metrics(**kwargs) -> dict:
     return {
@@ -97,7 +98,7 @@ def calc_mean_average_precision(df: pd.DataFrame, vague_prob_column='vague_prob'
     return np.round(0.5 * result, decimals=4)
 
 
-def calc_average_precision_k(df: pd.DataFrame, vague_prob_column: str, not_vague_prob_column: str, ground_truth_column: int, query: str, k=None) -> float:
+def calc_average_precision_k(df: pd.DataFrame, vague_prob_column: str, not_vague_prob_column: str, ground_truth_column: int, query: str, k=None) -> float: # pylint:disable=too-many-arguments
     """
     Calculate the average precision @ k.
 
@@ -114,7 +115,7 @@ def calc_average_precision_k(df: pd.DataFrame, vague_prob_column: str, not_vague
 
     if k is None or k > df.shape[0]:
         k = df.shape[0]
-    LOGGER.info(f'Calculate average precision @ k for query="{query}" and k="{k}"')
+    LOGGER.info('Calculate average precision @ k for query="%s" and k="%s"', query, k)
 
     if query == 'vague':
         sorted_df = df.sort_values(by=vague_prob_column, ascending=False).reset_index(drop=True)
@@ -151,7 +152,7 @@ def calc_average_precision_k(df: pd.DataFrame, vague_prob_column: str, not_vague
 def _build_quotient(dividend, denominator):
     if denominator != 0:
         return dividend / denominator
-    else:
-        result = 0
-        LOGGER.warning(f'Denominator = 0. Skip metric calculation and set it to value="{result}".')
-        return result
+
+    result = 0
+    LOGGER.warning('Denominator = 0. Skip metric calculation and set it to value="%s".', result)
+    return result

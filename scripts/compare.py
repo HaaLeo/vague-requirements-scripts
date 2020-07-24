@@ -1,8 +1,10 @@
-from os import path
-import inspect
+# ------------------------------------------------------------------------------------------------------
+#  Copyright (c) Leo Hanisch. All rights reserved.
+#  Licensed under the BSD 3-Clause License. See LICENSE.txt in the project root for license information.
+# ------------------------------------------------------------------------------------------------------
+
 import logging
 import sys
-from typing import Iterable
 
 import pandas as pd
 
@@ -20,6 +22,7 @@ logging.basicConfig(
 LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(logging.DEBUG)
 
+# pylint:disable=invalid-name
 
 def main():
     first_batch_files = [
@@ -76,10 +79,10 @@ def _calc_kappa(confusion_matrix: pd.DataFrame) -> None:
     # confusion_matrix.to_csv('./confusion_matrix.csv', sep=',', index=False, quoting=csv.QUOTE_NONNUMERIC)
 
     fleiss_kappa = calculate_fleiss_kappa(confusion_matrix)
-    LOGGER.info(f'Calculated Fleiss\' kappa = {fleiss_kappa}.')
+    LOGGER.info('Calculated Fleiss\' kappa = %s.', fleiss_kappa)
 
     free_kappa = calculate_free_marginal_kappa(confusion_matrix)
-    LOGGER.info(f'Calculated free kappa k_free = {free_kappa}.')
+    LOGGER.info('Calculated free kappa k_free = %s.', free_kappa)
 
 
 def _calc_percentage(confusion_matrix: pd.DataFrame) -> None:
@@ -107,7 +110,7 @@ def _calc_percentage(confusion_matrix: pd.DataFrame) -> None:
         overall_count += 1
 
     LOGGER.info('Overall requirements="%s". Equal label="%s". Unequal label="%s".', overall_count, equal_label_count, unequal_label_count)
-    LOGGER.info(f'Percentage of unequally labeled requirements="{(unequal_label_count/overall_count)*100}%".')
+    LOGGER.info('Percentage of unequally labeled requirements="%s".' % (unequal_label_count/overall_count)*100)
 
 
 def _preprocess(files_list: list, separator: str, drop_ties: bool) -> pd.DataFrame:

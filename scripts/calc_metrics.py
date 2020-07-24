@@ -1,9 +1,10 @@
-from os import path
-import inspect
+# ------------------------------------------------------------------------------------------------------
+#  Copyright (c) Leo Hanisch. All rights reserved.
+#  Licensed under the BSD 3-Clause License. See LICENSE.txt in the project root for license information.
+# ------------------------------------------------------------------------------------------------------
+
 import logging
 import sys
-
-import pandas as pd
 
 from vaguerequirementslib.read_csv import read_csv_file
 
@@ -21,10 +22,10 @@ CANNOT_DECIDE_LABEL = -1
 
 def main():
     truth_file_path = '../../../Desktop/Masters_Thesis/datasets/102Requirements_truth.csv'
-    labeld_data_file_path = f'../../../Desktop/Masters_Thesis/datasets/vague_requirements/2020_05_05_Batch_evaluated.csv'
+    labeld_data_file_path = '../../../Desktop/Masters_Thesis/datasets/vague_requirements/2020_05_05_Batch_evaluated.csv'
     separator = ';'
 
-    LOGGER.info(f'Red data')
+    LOGGER.info('Red data')
     data_frame = read_csv_file(labeld_data_file_path, separator)
     truth_frame = read_csv_file(truth_file_path, separator)
 
@@ -33,7 +34,7 @@ def main():
     false_positive = 0
     false_negative = 0
     # Iterate rows of the evaluated data frame
-    for index, row in data_frame.iterrows():
+    for _, row in data_frame.iterrows():
 
         # Get the ground truth for the current requirement
         truth_label = int(truth_frame.loc[truth_frame['requirement'] == row['requirement']].get(key='vague'))
@@ -75,20 +76,21 @@ def main():
 
 
 def print_result(metrics: dict, separator):
-    LOGGER.info(f'True positives: {metrics["true_positive"]}.')
-    LOGGER.info(f'True negatives: {metrics["true_negative"]}.')
-    LOGGER.info(f'False positives: {metrics["false_positive"]}.')
-    LOGGER.info(f'False negatives: {metrics["false_negative"]}.')
+    LOGGER.info('True positives: %s.', metrics['true_positive'])
+    LOGGER.info('True negatives: %s.', metrics['true_negative'])
+    LOGGER.info('False positives: %s.', metrics['false_positive'])
+    LOGGER.info('False negatives: %s.', metrics['false_negative'])
 
     LOGGER.info('Calculated metrics.')
-    LOGGER.info(f'Accuracy: {metrics["accuracy"]}')
-    LOGGER.info(f'Precision: {metrics["precision"]}')
-    LOGGER.info(f'Recall: {metrics["recall"]}')
-    LOGGER.info(f'Specificity: {metrics["specificity"]}')
-    LOGGER.info(f'False negative rate: {metrics["false_negative_rate"]}')
-    LOGGER.info(f'False positive rate: {metrics["false_positive_rate"]}')
-    LOGGER.info(f'F1 score: {metrics["f1_score"]}')
+    LOGGER.info('Accuracy: %s', metrics['accuracy'])
+    LOGGER.info('Precision: %s', metrics['precision'])
+    LOGGER.info('Recall: %s', metrics['recall'])
+    LOGGER.info('Specificity: %s', metrics['specificity'])
+    LOGGER.info('False negative rate: %s', metrics['false_negative_rate'])
+    LOGGER.info('False positive rate: %s', metrics['false_positive_rate'])
+    LOGGER.info('F1 score: %s', metrics['f1_score'])
 
+    #pylint: disable=logging-fstring-interpolation
     LOGGER.info(f'Print CSV style:\n\
 "True positives:"{separator}{metrics["true_positive"]}\n\
 "True negatives:"{separator}{metrics["true_negative"]}\n\

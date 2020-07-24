@@ -1,9 +1,15 @@
+# ------------------------------------------------------------------------------------------------------
+#  Copyright (c) Leo Hanisch. All rights reserved.
+#  Licensed under the BSD 3-Clause License. See LICENSE.txt in the project root for license information.
+# ------------------------------------------------------------------------------------------------------
+
 import logging
 
 import pandas as pd
 import numpy as np
 LOGGER = logging.getLogger(__name__)
 
+# pylint:disable=invalid-name
 
 def calculate_fleiss_kappa(confusion_matrix: pd.DataFrame) -> float:
     """
@@ -20,7 +26,7 @@ def calculate_fleiss_kappa(confusion_matrix: pd.DataFrame) -> float:
     raters_counts = confusion_matrix.sum(axis=1, numeric_only=True)
     assert len(set(raters_counts)) == 1, 'The raters count is inconsistent'
     raters_count = int(raters_counts[0])
-    LOGGER.debug(f'Each requirement was labeled by {raters_count} workers.')
+    LOGGER.debug('Each requirement was labeled by %s workers.', raters_count)
 
     # Calc P mean
     # Omit requirement column
@@ -56,7 +62,7 @@ def calculate_free_marginal_kappa(confusion_matrix: pd.DataFrame) -> float:
     raters_counts = confusion_matrix.sum(axis=1, numeric_only=True)
     assert len(set(raters_counts)) == 1, 'The raters count is inconsistent'
     raters_count = int(raters_counts[0])
-    LOGGER.debug(f'Each requirement was labeled by {raters_count} workers.')
+    LOGGER.debug('Each requirement was labeled by %s workers.', raters_count)
 
     # Calc P mean
     # Omit requirement column

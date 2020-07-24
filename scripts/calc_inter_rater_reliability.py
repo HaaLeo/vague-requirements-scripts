@@ -1,9 +1,10 @@
-import logging
-from typing import Iterator
-import sys
-import csv
+# ------------------------------------------------------------------------------------------------------
+#  Copyright (c) Leo Hanisch. All rights reserved.
+#  Licensed under the BSD 3-Clause License. See LICENSE.txt in the project root for license information.
+# ------------------------------------------------------------------------------------------------------
 
-import pandas as pd
+import logging
+import sys
 
 from vaguerequirementslib.read_csv import read_csv_files
 from vaguerequirementslib.confusion_matrix import build_confusion_matrix
@@ -28,7 +29,7 @@ def main():
         '../../../Desktop/Masters_Thesis/datasets/102Requirements_expert_SE.csv',  # Basti's Labels
     ]
 
-    df = read_csv_files(batch_names)
+    df = read_csv_files(batch_names) # pylint:disable=invalid-name
 
     confusion_matrix = build_confusion_matrix(df)
     # Wikipedia test data
@@ -50,8 +51,8 @@ def main():
     fleiss_kappa = calculate_fleiss_kappa(confusion_matrix)
     free_kappa = calculate_free_marginal_kappa(confusion_matrix)
 
-    LOGGER.info(f'Calculated Fleiss\' kappa = {fleiss_kappa}.')
-    LOGGER.info(f'Calculated free kappa k_free = {free_kappa}.')
+    LOGGER.info('Calculated Fleiss\' kappa = %s.', fleiss_kappa)
+    LOGGER.info('Calculated free kappa k_free = %s.', free_kappa)
 
 
 if __name__ == '__main__':

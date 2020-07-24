@@ -1,3 +1,8 @@
+# ------------------------------------------------------------------------------------------------------
+#  Copyright (c) Leo Hanisch. All rights reserved.
+#  Licensed under the BSD 3-Clause License. See LICENSE.txt in the project root for license information.
+# ------------------------------------------------------------------------------------------------------
+
 # Confusion matrix related constants
 CM_VAGUE_COUNT_COLUMN = 'vague_count'
 CM_NOT_VAGUE_COUNT_COLUMN = 'not_vague_count'
@@ -7,8 +12,8 @@ CM_REQUIREMENT_COLUMN = 'requirement'
 MTURK_REQUIREMENT_COLUMN = 'Input.requirement'  # The requirement column name of MTurk's batch result
 MTURK_LEGACY_ANSWER_COLUMN = 'Answer.vague-words.label'
 MTURK_ANSWER_COLUMN = 'Answer.vague-requirement.label'
-MTURK_VAGUE_ANSWER_LABELS = ['1 - Yes, it is vague', '1 - Yes, contains vague words', '3 - Cannot decide']
-MTURK_NOT_VAGUE_ANSWER_LABELS = ['2 - No, it is not vague', '2 - No, contains no vague words']
+MTURK_VAGUE_ANSWER_LABELS = ('1 - Yes, it is vague', '1 - Yes, contains vague words', '3 - Cannot decide')
+MTURK_NOT_VAGUE_ANSWER_LABELS = ('2 - No, it is not vague', '2 - No, contains no vague words')
 
 MAJORITY_LABEL_COLUMN = 'majority_label'
 
