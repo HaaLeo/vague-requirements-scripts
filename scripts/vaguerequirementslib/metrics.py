@@ -4,6 +4,8 @@
 # ------------------------------------------------------------------------------------------------------
 
 import logging
+from typing import Tuple
+
 import pandas as pd
 import numpy as np
 
@@ -70,7 +72,7 @@ def calc_f1_score(**kwargs):
     return _build_quotient(dividend, denominator)
 
 
-def calc_mean_average_precision(df: pd.DataFrame, vague_prob_column='vague_prob', not_vague_prob_column='not_vague_prob', ground_truth_column='majority_label') -> float:
+def calc_mean_average_precision(df: pd.DataFrame, vague_prob_column='vague_prob', not_vague_prob_column='not_vague_prob', ground_truth_column='majority_label') -> Tuple[float, float, float]:
     """
     Calculate the mean average precision for a given data frame.
     Example data frame:
@@ -88,17 +90,16 @@ def calc_mean_average_precision(df: pd.DataFrame, vague_prob_column='vague_prob'
         float: mean average precision
     """
 
-    result = 0.
-    for label in ['vague', 'not_vague']:
-        sorted_df = df.sort_values(by=vague_prob_column) if label == 'vague' else df.sort_values(by=not_vague_prob_column)
-
-        result += calc_average_precision_k(sorted_df, vague_prob_column, not_vague_prob_column, ground_truth_column, label)
+    precisions = [
+        calc_average_precision_k(df, query=query, vague_prob_column=vague_prob_column, not_vague_prob_column=not_vague_prob_column, ground_truth_column=ground_truth_column)
+        for query in ['vague', 'not_vague']
+    ]
 
     # Binary case
-    return np.round(0.5 * result, decimals=4)
+    return (_build_quotient(np.sum(precisions), len(precisions)), *precisions)
 
 
-def calc_average_precision_k(df: pd.DataFrame, vague_prob_column: str, not_vague_prob_column: str, ground_truth_column: int, query: str, k=None) -> float: # pylint:disable=too-many-arguments
+def calc_average_precision_k(df: pd.DataFrame, query: str, k=None, vague_prob_column='vague_prob', not_vague_prob_column='not_vague_prob', ground_truth_column='majority_label') -> float: # pylint:disable=too-many-arguments
     """
     Calculate the average precision @ k.
 

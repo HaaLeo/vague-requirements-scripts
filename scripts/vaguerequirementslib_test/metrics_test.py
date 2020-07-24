@@ -19,7 +19,9 @@ def test_calc_mean_average_precision_correctly():
 
     result = calc_mean_average_precision(df)
 
-    assert result == 0.35
+    assert pytest.approx(result[0]) == 0.35
+    assert pytest.approx(result[1]) == 0.7
+    assert result[2] == 0
 
 def test_calc_average_precision_k_correctly():
     df = pd.DataFrame.from_dict({
@@ -28,6 +30,6 @@ def test_calc_average_precision_k_correctly():
         'majority_label': [0, 1, 1, 0, 1]
     })
 
-    result = calc_average_precision_k(df, 'vague_prob', 'not_vague_prob', 'majority_label', 'vague')
+    result = calc_average_precision_k(df, 'vague')
 
     assert pytest.approx(result) == 0.7
