@@ -21,3 +21,16 @@ In the scripts adjust the file paths to your data sets then you can run them lik
 ```zsh
 python3 scripts/compare.py
 ```
+
+## Google Colab Helper
+
+To avoid being disconnected from Google Colab due to inactivity one can insert the following into the browser's console:
+```js
+function ClickConnect(){
+    console.log(`[${new Date().toISOString()}] Working`);
+    document.querySelector("colab-connect-button").shadowRoot.getElementById('connect').click();
+}
+const myInterval = setInterval(ClickConnect,60000);
+```
+
+Code was derived from [ShIvam Rawat's example](https://medium.com/@shivamrawat_756/how-to-prevent-google-colab-from-disconnecting-717b88a128c0).

@@ -10,6 +10,7 @@ import json
 from bisect import bisect
 import csv
 
+import numpy as np
 import pandas as pd
 
 logging.basicConfig(
@@ -22,7 +23,7 @@ LOGGER.setLevel(logging.DEBUG)
 
 #pylint: disable=too-many-locals
 def main():
-    file_glob = '/Users/leohanisch/Desktop/Masters_Thesis/runs/grid-search/1/**/*evaluation.json'
+    file_glob = '/Users/leohanisch/Desktop/Masters_Thesis/runs/bert/1/**/*evaluation.json'
     best_n = None
     metric = 'recall'
 
@@ -38,8 +39,8 @@ def main():
             current_result = json.load(eval_file)
 
         # The metric value with respect to the test set after the last trained fold.
-        metrics_dict = current_result['fold_results'][-1]['metrics']['test']['vague']
-        metric_value = metrics_dict[metric]
+        metrics_dict = current_result['fold_results'][-1]['metrics']['test']
+        metric_value = metrics_dict['vague'][metric]
         insertion_index = bisect(best_metrics, metric_value)
 
         # The used hyperparameter
@@ -48,7 +49,7 @@ def main():
         hyperparameter_dict.pop('max_features', None)
 
         merged = {
-            **metrics_dict,
+            **metrics_dict['vague'],
             **hyperparameter_dict,
             'resampling_strategy': current_result['data_set']['resampling_strategy']
         }
@@ -56,6 +57,11 @@ def main():
         if not 'kfold_splits' in merged:
             merged['kfold_splits'] = len(current_result['fold_results'])
 
+
+        if 'mean_average_precision' in metrics_dict:
+            merged['mean_average_precision'] = metrics_dict['mean_average_precision']
+        else:
+            merged['mean_average_precision'] = np.Nan
         if not best_entries:
             best_entries = {key: [] for key in merged}
 
