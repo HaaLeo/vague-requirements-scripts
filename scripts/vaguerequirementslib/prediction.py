@@ -6,7 +6,6 @@
 import logging
 from typing import List
 
-import numpy as np
 
 LOGGER = logging.getLogger(__name__)
 
