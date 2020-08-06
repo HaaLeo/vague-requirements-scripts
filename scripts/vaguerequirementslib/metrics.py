@@ -87,12 +87,12 @@ def calc_mean_average_precision(df: pd.DataFrame, vague_prob_column='vague_prob'
         ground_truth_column (int): The column name for the ground truth
 
     Returns:
-        float: mean average precision
+        Tuple[float, float, float]: mean average precision, average precision not vague, average precision vague
     """
 
     precisions = [
         calc_average_precision_k(df, query=query, vague_prob_column=vague_prob_column, not_vague_prob_column=not_vague_prob_column, ground_truth_column=ground_truth_column)
-        for query in ['vague', 'not_vague']
+        for query in ['not_vague', 'vague']
     ]
 
     # Binary case
@@ -120,14 +120,10 @@ def calc_average_precision_k(df: pd.DataFrame, query: str, k=None, vague_prob_co
 
     if query == 'vague':
         sorted_df = df.sort_values(by=vague_prob_column, ascending=False).reset_index(drop=True)
-        query_column = vague_prob_column
-        minor_column = not_vague_prob_column
-        truth_label = VAGUE_LABEL
+        queried_label = VAGUE_LABEL
     elif query == 'not_vague':
         sorted_df = df.sort_values(by=not_vague_prob_column, ascending=False).reset_index(drop=True)
-        query_column = not_vague_prob_column
-        minor_column = vague_prob_column
-        truth_label = NOT_VAGUE_LABEL
+        queried_label = NOT_VAGUE_LABEL
     else:
         raise ValueError(f'Query="{query}" is not supported.')
 
@@ -135,17 +131,10 @@ def calc_average_precision_k(df: pd.DataFrame, query: str, k=None, vague_prob_co
     num_hits = 0
     for index, row in sorted_df[:k].iterrows():
 
-        # Only consider hits for the queried column
-        if row[query_column] > row[minor_column]:
-            prediction = truth_label
-
-            # Hit
-            if prediction == row[ground_truth_column]:
-                num_hits += 1
-                score += num_hits / (index+1)
-
-        elif row[query_column] == row[minor_column]:
-            raise ValueError('Cannot handle tie.')
+        # Hit
+        if queried_label == row[ground_truth_column]:
+            num_hits += 1
+            score += num_hits / (index+1)
 
     return _build_quotient(score, num_hits)
 

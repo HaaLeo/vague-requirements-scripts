@@ -19,9 +19,9 @@ def test_calc_mean_average_precision_correctly():
 
     result = calc_mean_average_precision(df)
 
-    assert pytest.approx(result[0]) == 0.35
-    assert pytest.approx(result[1]) == 0.7
-    assert result[2] == 0
+    assert pytest.approx(result[0]) == 67/120 # map
+    assert pytest.approx(result[1]) == 5/12 # not vague
+    assert pytest.approx(result[2]) == 0.7 # vage
 
 def test_calc_average_precision_k_correctly():
     df = pd.DataFrame.from_dict({
